@@ -12,7 +12,7 @@ task_context "Task" do
     # Configure the port
     property("port", "/std/string", "/dev/ttyUSB0").doc("The device port")
     property("baudrate", "/int", 921600).doc("The device baudrate")
-    property("sampling_frequency", "/double", 1000).doc("Nominal samping frequency of the sensor in Hz")
+    property("sampling_frequency", "/double", 1000).doc("Nominal samping frequency of the sensor in Hz, persists over power cycles")
     
     # Output IMU sensor type, the only rotation is around the Z axis
     output_port("rotation","/base/samples/IMUSensors").doc("Gyro output (angular velocity), only rotation in Z axis is used")

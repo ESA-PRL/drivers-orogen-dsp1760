@@ -60,5 +60,5 @@ The device baudrate, by default: `921600`.
 
 * **`sampling_frequency`** (/double)
 
-Nominal samping frequency of the sensor in Hz, by default: `1000`.
+Nominal samping frequency of the sensor in Hz. Possible values are: `1`, `5`, `10`, `25`, `50`, `100`, `250`, `500`, `750`, `1000`, by default: `1000`.
 

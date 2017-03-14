@@ -42,6 +42,8 @@ bool Task::configureHook()
     // Get the sensor sampling frequency for the timestamp estimator
     sampling_frequency = _sampling_frequency.value();
     
+    driver->setDataRate(sampling_frequency);
+    
     // Configuration of time estimator
     timestamp_estimator = new aggregator::TimestampEstimator(
 	    base::Time::fromSeconds(20),
@@ -75,8 +77,8 @@ bool Task::startHook()
     if(activity)
     {
         activity->watch(driver->getFileDescriptor());
-        // Set the timeout in milliseconds
-        activity->setTimeout(100);
+        // Set the timeout to 2 seconds, slowest sampling time is 1Hz, this gives a 1 second margin
+        activity->setTimeout(2000);
     }
     else
     {
@@ -96,9 +98,14 @@ void Task::updateHook()
     RTT::extras::FileDescriptorActivity* activity = getActivity<RTT::extras::FileDescriptorActivity>();
     if(activity)
     {
-        if(activity->hasError() || activity->hasTimeout())
+        if(activity->hasError())
         {
             fprintf(stderr, "DSP1760: IO error\n");
+        }
+        
+        if(activity->hasTimeout())
+        {
+            fprintf(stderr, "DSP1760: Timeout\n");
         }
     }
     else
