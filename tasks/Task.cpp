@@ -52,7 +52,6 @@ bool Task::configureHook()
 	    INT_MAX);
 
     // Initial offset is set to 0
-    calibrating = false;
     gyro_bias = _gyro_bias.value();
     calibration_samples = 0;
 
@@ -145,15 +144,17 @@ void Task::updateHook()
     reading.angular_velocity = Eigen::Vector3d(0, 0, rotation_delta);
     _orientation_samples.write(reading);
 
-    if(calibrating)
+    // Run the bias calibration process
+    if(_calibrate.value())
     {
+        // Calibration samples acquired
         if(calibration_samples >= _calibration_samples.value())
         {
-            // Save the bias value in the properties of the gyro
+            // Save the bias value in the properties of the component
             _gyro_bias.value() = gyro_bias;
             //saveBiasValue(gyro_bias);
             calibration_samples = 0;
-            calibrating = false;
+            _calibrate.value() = false;
         }
         else
         {

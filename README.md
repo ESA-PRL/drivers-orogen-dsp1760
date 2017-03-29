@@ -62,3 +62,14 @@ The device baudrate, by default: `921600`.
 
 Nominal samping frequency of the sensor in Hz. Possible values are: `1`, `5`, `10`, `25`, `50`, `100`, `250`, `500`, `750`, `1000`, by default: `1000`.
 
+* **`calibrate`** (/bool)
+
+Start sensor calibration. Read during runtime so the calibration can be started at any time. By default set to `false`.
+
+* **`calibration_samples`** (/int)
+
+Number of samples to average over for bias calibration.
+
+* **`gyro_bias`** (/double)
+
+Bias of the gyroscope z-axis.

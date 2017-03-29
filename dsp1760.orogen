@@ -15,6 +15,7 @@ task_context "Task" do
     property("sampling_frequency", "/double", 1000).doc("Nominal samping frequency of the sensor in Hz, persists over power cycles")
     property("calibration_samples", "/int", 1000).doc("Number of samples to average over for bias calibration")
     property("gyro_bias", "/double", 0).doc("Bias of the gyroscope z-axis")
+    property("calibrate", "/bool", false).doc("Start sensor calibration")
 
     # Output IMU sensor type, the only rotation is around the Z axis
     output_port("rotation","/base/samples/IMUSensors").doc("Gyro output (angular velocity), only rotation in Z axis is used")

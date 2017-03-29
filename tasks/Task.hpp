@@ -23,7 +23,6 @@ namespace dsp1760
 	      base::samples::IMUSensors imu;
 	      base::samples::RigidBodyState reading;
 
-        bool calibrating;
         float gyro_bias;
         unsigned long calibration_samples;
 
