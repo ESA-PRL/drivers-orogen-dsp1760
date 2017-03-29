@@ -2,10 +2,11 @@
 #define DSP1760_TASK_TASK_HPP
 
 #include "dsp1760/TaskBase.hpp"
-#include <dsp1760/src/dsp1760.hpp>
+#include <dsp1760/dsp1760.hpp>
 #include <aggregator/TimestampEstimator.hpp>
 #include <rtt/extras/FileDescriptorActivity.hpp>
 #include <base/samples/imu.h>
+#include <fstream>
 
 namespace dsp1760
 {
@@ -14,18 +15,24 @@ namespace dsp1760
 	friend class TaskBase;
     protected:
         dsp1760::DSP1760driver *driver;
-	    
+
         aggregator::TimestampEstimator* timestamp_estimator;
         double sampling_frequency;
         double gyro_integration;
-        
-	    base::samples::IMUSensors imu;
-	    base::samples::RigidBodyState reading;
-	    
+
+	      base::samples::IMUSensors imu;
+	      base::samples::RigidBodyState reading;
+
+        bool calibrating;
+        float gyro_bias;
+        unsigned long calibration_samples;
+
     public:
         Task(std::string const& name = "dsp1760::Task");
         Task(std::string const& name, RTT::ExecutionEngine* engine);
-	    ~Task();
+	      ~Task();
+
+        void saveBiasValue(float bias);
 
         bool configureHook();
         bool startHook();
@@ -37,4 +44,3 @@ namespace dsp1760
 }
 
 #endif
-

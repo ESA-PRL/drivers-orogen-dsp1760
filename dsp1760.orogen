@@ -8,18 +8,19 @@ import_types_from "base"
 
 task_context "Task" do
     needs_configuration
-    
+
     # Configure the port
     property("port", "/std/string", "/dev/ttyUSB0").doc("The device port")
     property("baudrate", "/int", 921600).doc("The device baudrate")
     property("sampling_frequency", "/double", 1000).doc("Nominal samping frequency of the sensor in Hz, persists over power cycles")
-    
+    property("calibration_samples", "/int", 1000).doc("Number of samples to average over for bias calibration")
+    property("gyro_bias", "/double", 0).doc("Bias of the gyroscope z-axis")
+
     # Output IMU sensor type, the only rotation is around the Z axis
     output_port("rotation","/base/samples/IMUSensors").doc("Gyro output (angular velocity), only rotation in Z axis is used")
     output_port("orientation_samples", "/base/samples/RigidBodyState").doc("Timestamped IMU reading samples containing the estimated orientation")
     # Throws some message in rock-display saying that unknown_t is not defined...
     #output_port("timestamp_estimator_status", "/aggregator/TimestampEstimatorStatus").doc("Timestamp estimator status")
-    
+
     required_activity :fd_driven
 end
-
