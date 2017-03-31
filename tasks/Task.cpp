@@ -56,13 +56,13 @@ bool Task::configureHook()
     calibration_samples = 0;
 
     // Define all IMU output fields to 0
-  	imu.gyro[0] = 0.0f;
-  	imu.gyro[1] = 0.0f;
-  	imu.gyro[2] = 0.0f;
-  	imu.acc[0] = 0.0f;
-  	imu.acc[1] = 0.0f;
-  	imu.acc[2] = 0.0f;
-  	imu.mag[0] = 0.0f;
+    imu.gyro[0] = 0.0f;
+    imu.gyro[1] = 0.0f;
+    imu.gyro[2] = 0.0f;
+    imu.acc[0] = 0.0f;
+    imu.acc[1] = 0.0f;
+    imu.acc[2] = 0.0f;
+    imu.mag[0] = 0.0f;
     imu.mag[1] = 0.0f;
     imu.mag[2] = 0.0f;
 
@@ -139,7 +139,8 @@ void Task::updateHook()
     // Write out the integrated output
     reading.time = timestamp_estimated;
 
-    gyro_integration += rotation_delta;
+    // Integrate the gyro to get the yaw position
+    gyro_integration += imu.gyro[2];
     reading.orientation = Eigen::AngleAxisd(gyro_integration, Eigen::Vector3d::Unit(2));
     reading.angular_velocity = Eigen::Vector3d(0, 0, rotation_delta);
     _orientation_samples.write(reading);
