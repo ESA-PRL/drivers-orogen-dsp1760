@@ -19,9 +19,12 @@ task_context "Task" do
 
     # Output IMU sensor type, the only rotation is around the Z axis
     output_port("rotation","/base/samples/IMUSensors").doc("Gyro output (angular velocity), only rotation in Z axis is used")
+    output_port("bias_samples","/base/samples/IMUSensors").doc("Gyro output (angular velocity) used to evaluate the bias")
     output_port("orientation_samples", "/base/samples/RigidBodyState").doc("Timestamped IMU reading samples containing the estimated orientation")
     # Throws some message in rock-display saying that unknown_t is not defined...
     #output_port("timestamp_estimator_status", "/aggregator/TimestampEstimatorStatus").doc("Timestamp estimator status")
+
+    runtime_states :CALIBRATING
 
     required_activity :fd_driven
 end

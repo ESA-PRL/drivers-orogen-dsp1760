@@ -132,29 +132,23 @@ void Task::updateHook()
     // Update the IMU timestamp
     imu.time = timestamp_estimated;
     // Update the Z rotation value
-    imu.gyro[2] = rotation_delta - gyro_bias;
-
-    _rotation.write(imu);
-
-    // Write out the integrated output
-    reading.time = timestamp_estimated;
-
-    // Integrate the gyro to get the yaw position
-    gyro_integration += imu.gyro[2];
-    reading.orientation = Eigen::AngleAxisd(gyro_integration, Eigen::Vector3d::Unit(2));
-    reading.angular_velocity = Eigen::Vector3d(0, 0, rotation_delta);
-    _orientation_samples.write(reading);
+    imu.gyro[2] = rotation_delta;
 
     // Run the bias calibration process
     if(_calibrate.value())
     {
+        if(state() != CALIBRATING)
+        {
+            state(CALIBRATING);
+        }
+
         // Calibration samples acquired
         if(calibration_samples >= _calibration_samples.value())
         {
             // Save the bias value in the properties of the component
             _gyro_bias.value() = gyro_bias;
             // Output the bias value to the console for easy access
-            printf("DSP1760 bias value: %f", gyro_bias);
+            printf("DSP1760 bias value: %.*e\n", 10, gyro_bias);
             // TODO remove the saving to file part
             //saveBiasValue(gyro_bias);
             calibration_samples = 0;
@@ -164,9 +158,26 @@ void Task::updateHook()
         {
             // Do a rolling average of the rotation value
             gyro_bias = (gyro_bias * calibration_samples + rotation_delta) / (calibration_samples + 1);
+            _bias_samples.write(imu);
             calibration_samples++;
         }
     }
+    else if(state() != RUNNING)
+    {
+        state(RUNNING);
+    }
+
+    // Remove the bias and output the compensated gyro value
+    imu.gyro[2] -= gyro_bias;
+    _rotation.write(imu);
+
+    // Write out the integrated output
+    reading.time = timestamp_estimated;
+    // Integrate the gyro to get the yaw position
+    gyro_integration += imu.gyro[2];
+    reading.orientation = Eigen::AngleAxisd(gyro_integration, Eigen::Vector3d::Unit(2));
+    reading.angular_velocity = Eigen::Vector3d(0, 0, rotation_delta);
+    _orientation_samples.write(reading);
 
     // # Throws some message in rock-display saying that unknown_t is not defined...
     //_timestamp_estimator_status.write(timestamp_estimator->getStatus());

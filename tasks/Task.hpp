@@ -7,6 +7,7 @@
 #include <rtt/extras/FileDescriptorActivity.hpp>
 #include <base/samples/imu.h>
 #include <fstream>
+#include <float.h>
 
 namespace dsp1760
 {
@@ -20,16 +21,16 @@ namespace dsp1760
         double sampling_frequency;
         double gyro_integration;
 
-	      base::samples::IMUSensors imu;
-	      base::samples::RigidBodyState reading;
+        base::samples::IMUSensors imu;
+        base::samples::RigidBodyState reading;
 
-        float gyro_bias;
+        double gyro_bias;
         unsigned long calibration_samples;
 
     public:
         Task(std::string const& name = "dsp1760::Task");
         Task(std::string const& name, RTT::ExecutionEngine* engine);
-	      ~Task();
+        ~Task();
 
         void saveBiasValue(float bias);
 
