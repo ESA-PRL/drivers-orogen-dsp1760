@@ -152,6 +152,9 @@ void Task::updateHook()
         {
             // Save the bias value in the properties of the component
             _gyro_bias.value() = gyro_bias;
+            // Output the bias value to the console for easy access
+            printf("DSP1760 bias value: %f", gyro_bias);
+            // TODO remove the saving to file part
             //saveBiasValue(gyro_bias);
             calibration_samples = 0;
             _calibrate.value() = false;
@@ -168,6 +171,7 @@ void Task::updateHook()
     //_timestamp_estimator_status.write(timestamp_estimator->getStatus());
 }
 
+// TODO remove this function after test
 void Task::saveBiasValue(float bias)
 {
     // Save the bias calibration values
