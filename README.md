@@ -86,6 +86,6 @@ Bias of the gyroscope z-axis.
 
 * **`unit_dsp1760`**
 
-Unit test demonstrating the calibration procedure for the gyro, once launched call `rock-display` and set calibration to `true` via the interface. Otherwise configure the ruby file to launch the calibration as soon as it starts by setting the `calubrate` property to `true`.
+Unit test demonstrating the calibration procedure for the gyro, once launched call `rock-display` and set `calibrate` to `true` via the interface. Otherwise configure the ruby file to launch the calibration as soon as it starts by setting the `calibrate` property to `true`. The component state will switch to `CALIBRATING` while the script is sampling the gyro, during this time the gyro should not be moved.
 
     ruby unit_dsp1760.rb
