@@ -81,3 +81,11 @@ Number of samples to average over for bias calibration.
 * **`bias`** (/double)
 
 Bias of the gyroscope z-axis.
+
+#### Deployements
+
+* **`unit_dsp1760`**
+
+Unit test demonstrating the calibration procedure for the gyro, once launched call `rock-display` and set calibration to `true` via the interface. Otherwise configure the ruby file to launch the calibration as soon as it starts by setting the `calubrate` property to `true`.
+
+    ruby unit_dsp1760.rb
