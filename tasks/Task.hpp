@@ -25,6 +25,7 @@ namespace dsp1760
         base::samples::RigidBodyState reading;
 
         double bias;
+        double latitude;
         unsigned long calibration_samples;
 
     public:

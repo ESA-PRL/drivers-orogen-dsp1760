@@ -54,6 +54,7 @@ bool Task::configureHook()
     // Initial offset is set to 0
     bias = _bias.value();
     calibration_samples = 0;
+    latitude = _latitude.value();
 
     // Define all IMU output fields to 0
     imu.gyro[0] = 0.0f;
@@ -170,6 +171,9 @@ void Task::updateHook()
 
     // Remove the bias and output the compensated gyro value
     imu.gyro[2] -= bias;
+    // Remove the earth rotation component
+    // TODO this part
+    imu.gyro[2] -= 0;
     _rotation.write(imu);
 
     // Write out the integrated output
