@@ -48,6 +48,14 @@ Gyro output (angular velocity), only rotation in Z axis is used.
 
 Timestamped IMU reading samples containing the "absolute" orientation (relative to initial orientation). Only rotation in Z axis is used.
 
+* **`bias_samples`** (/base/samples/IMUSensors)
+
+Gyro output (angular velocity) used to evaluate the bias
+
+* **`bias_values`** (/double)
+
+Output of bias (average of bias_samples)
+
 #### Parameters
 
 * **`port`** (/std/string)
@@ -70,6 +78,6 @@ Start sensor calibration. Read during runtime so the calibration can be started 
 
 Number of samples to average over for bias calibration.
 
-* **`gyro_bias`** (/double)
+* **`bias`** (/double)
 
 Bias of the gyroscope z-axis.

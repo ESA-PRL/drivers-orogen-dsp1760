@@ -29,3 +29,8 @@ task_context "Task" do
 
     required_activity :fd_driven
 end
+
+deployment 'unit_dsp1760' do
+    task("dsp1760", "dsp1760::Task")
+    add_default_logger
+end
