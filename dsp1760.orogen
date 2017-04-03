@@ -14,13 +14,14 @@ task_context "Task" do
     property("baudrate", "/int", 921600).doc("The device baudrate")
     property("sampling_frequency", "/double", 1000).doc("Nominal samping frequency of the sensor in Hz, persists over power cycles")
     property("calibration_samples", "/int", 1000).doc("Number of samples to average over for bias calibration")
-    property("gyro_bias", "/double", 0).doc("Bias of the gyroscope z-axis")
+    property("bias", "/double", 0).doc("Bias of the gyroscope z-axis")
     property("calibrate", "/bool", false).doc("Start sensor calibration")
 
     # Output IMU sensor type, the only rotation is around the Z axis
     output_port("rotation","/base/samples/IMUSensors").doc("Gyro output (angular velocity), only rotation in Z axis is used")
-    output_port("bias_samples","/base/samples/IMUSensors").doc("Gyro output (angular velocity) used to evaluate the bias")
     output_port("orientation_samples", "/base/samples/RigidBodyState").doc("Timestamped IMU reading samples containing the estimated orientation")
+    output_port("bias_samples","/base/samples/IMUSensors").doc("Gyro output (angular velocity) used to evaluate the bias")
+    output_port("bias_values", "/double").doc("Output of bias (average of bias_samples)")
     # Throws some message in rock-display saying that unknown_t is not defined...
     #output_port("timestamp_estimator_status", "/aggregator/TimestampEstimatorStatus").doc("Timestamp estimator status")
 

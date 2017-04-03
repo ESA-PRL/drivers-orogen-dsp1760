@@ -52,7 +52,7 @@ bool Task::configureHook()
 	    INT_MAX);
 
     // Initial offset is set to 0
-    gyro_bias = _gyro_bias.value();
+    bias = _bias.value();
     calibration_samples = 0;
 
     // Define all IMU output fields to 0
@@ -146,18 +146,19 @@ void Task::updateHook()
         if(calibration_samples >= _calibration_samples.value())
         {
             // Save the bias value in the properties of the component
-            _gyro_bias.value() = gyro_bias;
+            _bias.value() = bias;
             // Output the bias value to the console for easy access
-            printf("DSP1760 bias value: %.*e\n", 10, gyro_bias);
-            // TODO remove the saving to file part
-            //saveBiasValue(gyro_bias);
+            printf("DSP1760 bias value: %.*e\n", 10, bias);
+            // Output to a port for logger to save the bias value
+            _bias_values.write(bias);
+            // Reset calibration values
             calibration_samples = 0;
             _calibrate.value() = false;
         }
         else
         {
             // Do a rolling average of the rotation value
-            gyro_bias = (gyro_bias * calibration_samples + rotation_delta) / (calibration_samples + 1);
+            bias = (bias * calibration_samples + rotation_delta) / (calibration_samples + 1);
             _bias_samples.write(imu);
             calibration_samples++;
         }
@@ -168,7 +169,7 @@ void Task::updateHook()
     }
 
     // Remove the bias and output the compensated gyro value
-    imu.gyro[2] -= gyro_bias;
+    imu.gyro[2] -= bias;
     _rotation.write(imu);
 
     // Write out the integrated output
@@ -181,20 +182,6 @@ void Task::updateHook()
 
     // # Throws some message in rock-display saying that unknown_t is not defined...
     //_timestamp_estimator_status.write(timestamp_estimator->getStatus());
-}
-
-// TODO remove this function after test
-void Task::saveBiasValue(float bias)
-{
-    // Save the bias calibration values
-    char filename[240];
-    // TODO ARGH! NO! Don't do this!!!! Also remove the include form the header
-    sprintf(filename, "~/dev/bundles/hdpr/logs/current/dsp1760_estimated_bias.txt");
-    std::ofstream file;
-    file.open(filename);
-    file << "******** DSP1760 Gyroscope Bias Offset *******"<<"\n";
-    file << "Z-axis gyroscope bias offset: " << bias <<"\n";
-    file.close();
 }
 
 void Task::errorHook()

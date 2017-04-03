@@ -24,15 +24,13 @@ namespace dsp1760
         base::samples::IMUSensors imu;
         base::samples::RigidBodyState reading;
 
-        double gyro_bias;
+        double bias;
         unsigned long calibration_samples;
 
     public:
         Task(std::string const& name = "dsp1760::Task");
         Task(std::string const& name, RTT::ExecutionEngine* engine);
         ~Task();
-
-        void saveBiasValue(float bias);
 
         bool configureHook();
         bool startHook();
