@@ -144,14 +144,19 @@ void Task::updateHook()
         }
 
         // Calibration samples acquired
-        if(calibration_samples >= _calibration_samples.value())
+        if(calibration_samples >= (unsigned)_calibration_samples.value())
         {
             // Save the bias value in the properties of the component
             _bias.value() = bias;
             // Output the bias value to the console for easy access
             printf("DSP1760 bias value: %.*e\n", 10, bias);
+            
             // Output to a port for logger to save the bias value
-            _bias_values.write(bias);
+            dsp1760::samples::Bias bias_sample;
+            bias_sample.time = base::Time::now();
+            bias_sample.bias_value = bias;
+            _bias_values.write(bias_sample);
+
             // Reset calibration values
             calibration_samples = 0;
             _calibrate.value() = false;

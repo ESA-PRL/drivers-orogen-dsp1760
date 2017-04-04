@@ -1,10 +1,10 @@
 name "dsp1760"
-version "1.0"
 
 using_library "dsp1760"
 using_library "aggregator"
 import_types_from "aggregator"
 import_types_from "base"
+import_types_from "dsp1760Types.hpp"
 
 task_context "Task" do
     needs_configuration
@@ -22,7 +22,7 @@ task_context "Task" do
     output_port("rotation","/base/samples/IMUSensors").doc("Gyro output (angular velocity), only rotation in Z axis is used")
     output_port("orientation_samples", "/base/samples/RigidBodyState").doc("Timestamped IMU reading samples containing the estimated orientation")
     output_port("bias_samples","/base/samples/IMUSensors").doc("Gyro output (angular velocity) used to evaluate the bias")
-    output_port("bias_values", "/double").doc("Output of bias (average of bias_samples)")
+    output_port("bias_values", "/dsp1760/samples/Bias").doc("Output of bias (average of bias_samples)")
     # Throws some message in rock-display saying that unknown_t is not defined...
     #output_port("timestamp_estimator_status", "/aggregator/TimestampEstimatorStatus").doc("Timestamp estimator status")
 
