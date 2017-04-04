@@ -54,7 +54,7 @@ bool Task::configureHook()
     // Initial offset is set to 0
     bias = _bias.value();
     calibration_samples = 0;
-    latitude = _latitude.value();
+    latitude_rad = _latitude.value() * M_PI / 180.0f;
 
     // Define all IMU output fields to 0
     imu.gyro[0] = 0.0f;
@@ -91,6 +91,7 @@ bool Task::startHook()
         return false;
     }
 
+    time_start = base::Time::now();
     timestamp_estimator->reset();
 
     return true;
@@ -150,7 +151,7 @@ void Task::updateHook()
             _bias.value() = bias;
             // Output the bias value to the console for easy access
             printf("DSP1760 bias value: %.*e\n", 10, bias);
-            
+
             // Output to a port for logger to save the bias value
             dsp1760::samples::Bias bias_sample;
             bias_sample.time = base::Time::now();
@@ -165,6 +166,7 @@ void Task::updateHook()
         {
             // Do a rolling average of the rotation value
             bias = (bias * calibration_samples + rotation_delta) / (calibration_samples + 1);
+            // Bias sample values do not have earth rotation removed
             _bias_samples.write(imu);
             calibration_samples++;
         }
@@ -174,11 +176,13 @@ void Task::updateHook()
         state(RUNNING);
     }
 
-    // Remove the bias and output the compensated gyro value
+    // Remove the bias
     imu.gyro[2] -= bias;
+
+    // Seconds since the sensor started
+    base::Time time_online = base::Time::now() - time_start;
     // Remove the earth rotation component
-    // TODO this part
-    imu.gyro[2] -= 0;
+    imu.gyro[2] -= earth_rotation * sin(latitude_rad) * time_online.toSeconds();
     _rotation.write(imu);
 
     // Write out the integrated output

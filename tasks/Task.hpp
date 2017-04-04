@@ -25,8 +25,12 @@ namespace dsp1760
         base::samples::RigidBodyState reading;
 
         double bias;
-        double latitude;
+        double latitude_rad;
         unsigned long calibration_samples;
+
+        base::Time time_start;
+        // Constant taken from here: http://hypertextbook.com/facts/2002/JasonAtkins.shtml
+        static const double earth_rotation = 7.2921159e-5; // rad/s
 
     public:
         Task(std::string const& name = "dsp1760::Task");

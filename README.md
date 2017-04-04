@@ -50,11 +50,11 @@ Timestamped IMU reading samples containing the "absolute" orientation (relative 
 
 * **`bias_samples`** (/base/samples/IMUSensors)
 
-Gyro output (angular velocity) used to evaluate the bias
+Gyro output (angular velocity) used to evaluate the bias, sample values do not have earth rotation removed.
 
-* **`bias_values`** (/double)
+* **`bias_values`** (/dsp1760/samples/Bias)
 
-Output of bias (average of bias_samples)
+Output of timestamped bias value (average of `bias_samples`).
 
 #### Parameters
 
@@ -81,6 +81,10 @@ Number of samples to average over for bias calibration.
 * **`bias`** (/double)
 
 Bias of the gyroscope z-axis.
+
+* **`latitude`** (/double)
+
+Latitude position in degrees of the sensor during the launch of the component, used to remove the Earth rotation.
 
 #### Deployements
 
