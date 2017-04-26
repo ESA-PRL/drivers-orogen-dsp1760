@@ -15,6 +15,10 @@ Orocos::Process.run 'unit_dsp1760' do
     gyro.port = "/dev/hdpr-gyro"
     gyro.sampling_frequency = 10
     gyro.calibration_samples = 30
+    #gyro.bias = 7.0514832631e-06
+    gyro.bias = 0
+    #gyro.latitude = 52.2
+    gyro.latitude = 0
     gyro.configure
 
     # Log samples

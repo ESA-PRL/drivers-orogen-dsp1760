@@ -18,6 +18,7 @@ task_context "Task" do
     property("bias", "/double", 0).doc("Bias of the gyroscope z-axis")
     property("calibrate", "/bool", false).doc("Start sensor calibration. Read during runtime so the calibration can be started at any time.")
     property("latitude", "/double", 0).doc("Latitude position in degrees of the sensor during the launch of the component, used to remove the Earth rotation")
+    property("initial_heading", "/double", 0).doc("Initial heading in degrees, 0 points to North")
 
     # Output IMU sensor type, the only rotation is around the Z axis
     output_port("rotation","/base/samples/IMUSensors").doc("Gyro output (angular velocity), only rotation in Z axis is used")
@@ -26,7 +27,7 @@ task_context "Task" do
     output_port("bias_values", "/dsp1760/samples/Bias").doc("Output of bias (average of bias_samples)")
     # Throws some message in rock-display saying that unknown_t is not defined...
     #output_port("timestamp_estimator_status", "/aggregator/TimestampEstimatorStatus").doc("Timestamp estimator status")
-
+    output_port("temperature","float").doc("Gyro internal temeparature")
     runtime_states :CALIBRATING
 
     required_activity :fd_driven

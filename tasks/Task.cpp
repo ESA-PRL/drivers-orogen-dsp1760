@@ -43,6 +43,7 @@ bool Task::configureHook()
     sampling_frequency = _sampling_frequency.value();
 
     driver->setDataRate(sampling_frequency);
+    driver->setTemperatureDecimal(true);
 
     // Configuration of time estimator
     timestamp_estimator = new aggregator::TimestampEstimator(
@@ -55,6 +56,9 @@ bool Task::configureHook()
     bias = _bias.value();
     calibration_samples = 0;
     latitude_rad = _latitude.value() * M_PI / 180.0f;
+
+    // Inisialise the integrated gyro value (absolute heading)
+    gyro_integration = _initial_heading.value();
 
     // Define all IMU output fields to 0
     imu.gyro[0] = 0.0f;
@@ -121,7 +125,8 @@ void Task::updateHook()
     }
 
     float rotation_delta;
-    if(!driver->update(rotation_delta))
+    float temperature;
+    if(!driver->update(rotation_delta, temperature))
     {
         fprintf(stderr, "DSP1760: Error reading gyroscope\n");
     }
@@ -135,6 +140,12 @@ void Task::updateHook()
     imu.time = timestamp_estimated;
     // Update the Z rotation value
     imu.gyro[2] = rotation_delta;
+
+    // Remove the earth rotation component
+    // TODO: figure out if the Earth rotation must be added or removed (depends on hemisphere)
+    // Seconds since the sensor started
+    base::Time time_online = base::Time::now() - time_start;
+    imu.gyro[2] -= EARTH_ROTATION_RATE * cos(latitude_rad) * time_online.toSeconds();
 
     // Run the bias calibration process
     if(_calibrate.value())
@@ -166,7 +177,7 @@ void Task::updateHook()
         {
             // Do a rolling average of the rotation value
             bias = (bias * calibration_samples + rotation_delta) / (calibration_samples + 1);
-            // Bias sample values do not have earth rotation removed
+            // Bias sample values are already compensated for Earth rotation bias
             _bias_samples.write(imu);
             calibration_samples++;
         }
@@ -176,20 +187,18 @@ void Task::updateHook()
         state(RUNNING);
     }
 
-    // Remove the bias
+    // Remove the static bias
     imu.gyro[2] -= bias;
 
-    // Seconds since the sensor started
-    base::Time time_online = base::Time::now() - time_start;
-    // Remove the earth rotation component
-    imu.gyro[2] -= earth_rotation * sin(latitude_rad) * time_online.toSeconds();
     _rotation.write(imu);
+    _temperature.write(temperature);
 
-    // Write out the integrated output
+    // Write out the integrated output (outputs the absolute yaw orientation in a quaternion)
     reading.time = timestamp_estimated;
     // Integrate the gyro to get the yaw position
     gyro_integration += imu.gyro[2];
     reading.orientation = Eigen::AngleAxisd(gyro_integration, Eigen::Vector3d::Unit(2));
+    // Also set the angular velocity since there is a field for that
     reading.angular_velocity = Eigen::Vector3d(0, 0, rotation_delta);
     _orientation_samples.write(reading);
 

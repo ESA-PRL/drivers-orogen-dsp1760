@@ -30,7 +30,7 @@ namespace dsp1760
 
         base::Time time_start;
         // Constant taken from here: http://hypertextbook.com/facts/2002/JasonAtkins.shtml
-        static const double earth_rotation = 7.2921159e-5; // rad/s
+        static const double EARTH_ROTATION_RATE = 7.2921159e-5; // rad/s
 
     public:
         Task(std::string const& name = "dsp1760::Task");
