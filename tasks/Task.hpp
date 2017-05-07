@@ -28,7 +28,7 @@ namespace dsp1760
         double latitude_rad;
         unsigned long calibration_samples;
 
-        base::Time time_start;
+        base::Time last_time;
         // Constant taken from here: http://hypertextbook.com/facts/2002/JasonAtkins.shtml
         static const double EARTH_ROTATION_RATE = 7.2921159e-5; // rad/s
 

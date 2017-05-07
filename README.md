@@ -42,7 +42,11 @@ None
 
 * **`rotation`** (/base/samples/IMUSensors)
 
-Gyro output (angular velocity), only rotation in Z axis is used.
+Gyro output (angular velocity), compensated for Earth rotation and sensor bias, only rotation in Z axis is used.
+
+* **`rotation_raw`** (/base/samples/IMUSensors)
+
+Raw gyro output (angular velocity) without the Earth rotation compensation and bias removal, only rotation in Z axis is used.
 
 * **`orientation_samples`** (/base/samples/RigidBodyState)
 
@@ -55,6 +59,10 @@ Gyro output (angular velocity) used to evaluate the bias, sample values do not h
 * **`bias_values`** (/dsp1760/samples/Bias)
 
 Output of timestamped bias value (average of `bias_samples`).
+
+* **`temperature`** (/float)
+
+Gyro internal temeparature in degrees Celcius.
 
 #### Parameters
 

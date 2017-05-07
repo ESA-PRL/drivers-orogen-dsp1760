@@ -43,7 +43,10 @@ bool Task::configureHook()
     sampling_frequency = _sampling_frequency.value();
 
     driver->setDataRate(sampling_frequency);
+    // Set the temperature reading to output decimals
     driver->setTemperatureDecimal(true);
+    // Make sure the gyro outputs the rate (by default set to delta)
+    driver->setAngularDataFormat(RATE);
 
     // Configuration of time estimator
     timestamp_estimator = new aggregator::TimestampEstimator(
@@ -95,7 +98,8 @@ bool Task::startHook()
         return false;
     }
 
-    time_start = base::Time::now();
+    // Initialise the last_time to 0
+    last_time = base::Time();
     timestamp_estimator->reset();
 
     return true;
@@ -141,11 +145,13 @@ void Task::updateHook()
     // Update the Z rotation value
     imu.gyro[2] = rotation_delta;
 
+    // Write out the raw rotation value
+    _rotation_raw.write(imu);
+
     // Remove the earth rotation component
     // TODO: figure out if the Earth rotation must be added or removed (depends on hemisphere)
-    // Seconds since the sensor started
-    base::Time time_online = base::Time::now() - time_start;
-    imu.gyro[2] -= EARTH_ROTATION_RATE * cos(latitude_rad) * time_online.toSeconds();
+    float earth_rotation_bias = EARTH_ROTATION_RATE * sin(latitude_rad);
+    imu.gyro[2] -= earth_rotation_bias;
 
     // Run the bias calibration process
     if(_calibrate.value())
@@ -176,7 +182,7 @@ void Task::updateHook()
         else
         {
             // Do a rolling average of the rotation value
-            bias = (bias * calibration_samples + rotation_delta) / (calibration_samples + 1);
+            bias = (bias * calibration_samples + imu.gyro[2]) / (calibration_samples + 1);
             // Bias sample values are already compensated for Earth rotation bias
             _bias_samples.write(imu);
             calibration_samples++;
@@ -191,15 +197,26 @@ void Task::updateHook()
     imu.gyro[2] -= bias;
 
     _rotation.write(imu);
+
+    // Publish the sensor temperature as well
     _temperature.write(temperature);
 
     // Write out the integrated output (outputs the absolute yaw orientation in a quaternion)
     reading.time = timestamp_estimated;
+
+    // First value of last_time is initialised to current time
+    if(last_time == base::Time())
+    {
+        last_time = reading.time;
+    }
     // Integrate the gyro to get the yaw position
-    gyro_integration += imu.gyro[2];
+    base::Time delta_time = reading.time - last_time;
+    last_time = reading.time;
+
+    gyro_integration += imu.gyro[2] * delta_time.toSeconds();
     reading.orientation = Eigen::AngleAxisd(gyro_integration, Eigen::Vector3d::Unit(2));
     // Also set the angular velocity since there is a field for that
-    reading.angular_velocity = Eigen::Vector3d(0, 0, rotation_delta);
+    reading.angular_velocity = Eigen::Vector3d(0, 0, imu.gyro[2]);
     _orientation_samples.write(reading);
 
     // # Throws some message in rock-display saying that unknown_t is not defined...
