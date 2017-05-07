@@ -29,6 +29,7 @@ task_context "Task" do
     # Throws some message in rock-display saying that unknown_t is not defined...
     #output_port("timestamp_estimator_status", "/aggregator/TimestampEstimatorStatus").doc("Timestamp estimator status")
     output_port("temperature","float").doc("Gyro internal temeparature")
+    output_port("sequence_counter","uint8_t").doc("Sequential counter for the output")
     
     runtime_states :CALIBRATING
 

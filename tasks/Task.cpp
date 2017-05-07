@@ -130,7 +130,7 @@ void Task::updateHook()
 
     float rotation_delta;
     float temperature;
-    if(!driver->update(rotation_delta, temperature))
+    if(!driver->update(rotation_delta, temperature, sequence_counter))
     {
         fprintf(stderr, "DSP1760: Error reading gyroscope\n");
     }
@@ -218,6 +218,8 @@ void Task::updateHook()
     // Also set the angular velocity since there is a field for that
     reading.angular_velocity = Eigen::Vector3d(0, 0, imu.gyro[2]);
     _orientation_samples.write(reading);
+    
+    _sequence_counter.write(sequence_counter);
 
     // # Throws some message in rock-display saying that unknown_t is not defined...
     //_timestamp_estimator_status.write(timestamp_estimator->getStatus());

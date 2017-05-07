@@ -64,6 +64,10 @@ Output of timestamped bias value (average of `bias_samples`).
 
 Gyro internal temeparature in degrees Celcius.
 
+* **`sequence_counter`** (/uint8_t)
+
+Sequential counter for the output.
+
 #### Parameters
 
 * **`port`** (/std/string)

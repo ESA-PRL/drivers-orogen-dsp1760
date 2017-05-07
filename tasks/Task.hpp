@@ -27,6 +27,7 @@ namespace dsp1760
         double bias;
         double latitude_rad;
         unsigned long calibration_samples;
+        uint8_t sequence_counter;
 
         base::Time last_time;
         // Constant taken from here: http://hypertextbook.com/facts/2002/JasonAtkins.shtml
