@@ -5,7 +5,7 @@
 #include <dsp1760/dsp1760.hpp>
 #include <aggregator/TimestampEstimator.hpp>
 #include <rtt/extras/FileDescriptorActivity.hpp>
-#include <base/samples/imu.h>
+//#include <base/samples/IMUSensors.hpp>
 #include <fstream>
 #include <float.h>
 
@@ -31,7 +31,7 @@ namespace dsp1760
 
         base::Time last_time;
         // Constant taken from here: http://hypertextbook.com/facts/2002/JasonAtkins.shtml
-        static const double EARTH_ROTATION_RATE = 7.2921159e-5; // rad/s
+        const double EARTH_ROTATION_RATE = 7.2921159e-5; // rad/s
 
     public:
         Task(std::string const& name = "dsp1760::Task");
